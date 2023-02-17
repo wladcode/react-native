@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Button, StyleSheet } from "react-native";
+import { Button as PaperButton, Provider as PaperProvider } from "react-native-paper";
 import TextAndButton from "./componets/dc/buttons/TextAndButton";
 import Divider from "./componets/dc/Divider";
 import LayoutBasic from "./componets/dc/layout/LayoutBasic";
@@ -35,23 +36,28 @@ export default function App() {
   return (
     <>
       <StatusBar style="light" />
-      <LayoutBasic>
-        <Button
-          title="Add new item!"
-          color="#5e0acc"
-          onPress={startAddGoalHandler}
-        />
+      <PaperProvider>
+        <LayoutBasic>
 
-        <TextAndButton
-          viewModal={viewModal}
-          onPress={handlerButton}
-          onCancel={endGoalHandler}
-        />
+          <PaperButton
+            icon="plus"
+            mode="contained"
+            onPress={startAddGoalHandler}
+          >
+            Add new 
+          </PaperButton>
 
-        <Divider />
+          <TextAndButton
+            viewModal={viewModal}
+            onPress={handlerButton}
+            onCancel={endGoalHandler}
+          />
 
-        <ListData data={listData} deleteGoalHandler={deleteGoalHandler} />
-      </LayoutBasic>
+          <Divider />
+
+          <ListData data={listData} deleteGoalHandler={deleteGoalHandler} />
+        </LayoutBasic>
+      </PaperProvider>
     </>
   );
 }

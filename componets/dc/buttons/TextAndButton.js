@@ -1,25 +1,28 @@
+import { Formik } from "formik";
 import { useState } from "react";
+import { Button, Image, Modal, StyleSheet, View } from "react-native";
 import {
-  Button,
-  Image,
-  Modal,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+  Button as PaperButton,
+  HelperText,
+  TextInput
+} from "react-native-paper";
+import * as yup from "yup";
 
-const TextAndButton = ({ onPress, viewModal, onCancel }) => {
+const TextAndButton = ({ onPress, viewModal, onCancel, values }) => {
   const [enteredText, setEnteredText] = useState("");
 
-  const handlerInput = (enteredText) => {
-    setEnteredText(enteredText);
-  };
-
-  const handlerButton = () => {
-    onPress(enteredText);
+  const handlerButton = (values) => {
+    onPress(values.goal);
     setEnteredText("");
     onCancel();
   };
+
+  const loginValidationSchema = yup.object().shape({
+    goal: yup
+      .string()
+      .min(8, ({ min }) => `Goal name must be at least ${min} characters`)
+      .required("Goal name  is Required"),
+  });
 
   return (
     <Modal visible={viewModal} animationType="slide">
@@ -28,24 +31,52 @@ const TextAndButton = ({ onPress, viewModal, onCancel }) => {
           style={styles.image}
           source={require("../../../assets/images/goal.png")}
         />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Course goal!"
-          onChangeText={handlerInput}
-          value={enteredText}
-        />
-        <View style={styles.buttonContainer}>
-          <View style={styles.button}>
-            <Button title="Cancel" onPress={onCancel} color="#f31282" />
-          </View>
-          <View style={styles.button}>
-            <Button
-              title="Add a Goal!"
-              onPress={handlerButton}
-              color="#b180f0"
-            />
-          </View>
-        </View>
+        <Formik
+          validationSchema={loginValidationSchema}
+          initialValues={{ goal: "" }}
+          onSubmit={(values) => handlerButton(values)}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            isValid,
+          }) => (
+            <>
+              <TextInput
+                name="goal"
+                label="Goal name"
+                style={styles.textInput}
+                placeholder="Course goal!"
+                onChangeText={handleChange("goal")}
+                value={values.goal}
+              />
+              <HelperText
+                type="error"
+                visible={errors.goal}
+                style={styles.helperText}
+              >
+                {errors.goal}
+              </HelperText>
+
+              <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                  <Button title="Cancel" onPress={onCancel} color="#f31282" />
+                </View>
+                <PaperButton
+                  icon="plus"
+                  mode="contained"
+                  onPress={isValid && handleSubmit}
+                  buttonColor={!isValid && "red"}
+                >
+                  Add a Goal!
+                </PaperButton>
+              </View>
+            </>
+          )}
+        </Formik>
       </View>
     </Modal>
   );
@@ -60,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#311b6b",
+    backgroundColor: "#311b6c",
   },
   image: {
     width: 100,
@@ -68,14 +99,11 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   textInput: {
-    borderWidth: 1,
-    borderColor: "#e4d0ff",
-    borderRadius: 8,
     backgroundColor: "#e4d0ff",
     color: "#120438",
     width: "100%",
-    padding: 16,
   },
+  helperText: { fontSize: 14, color: "red", textAlign: "left" },
   buttonContainer: {
     marginTop: 16,
     flexDirection: "row",
