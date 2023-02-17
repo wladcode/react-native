@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { StyleSheet, View } from "react-native";
 
 const LayoutBasic = ({ children }) => {
   return <View style={styles.appContainer}>{children}</View>;
@@ -12,6 +12,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
     paddingHorizontal: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#1e085e",
   },
 });
